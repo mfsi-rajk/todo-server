@@ -9,11 +9,11 @@ const verifyAuth = function(req, res, next) {
       req.cookies.token;
 
   if (!token) {
-    res.status(401).send('Unauthorized: No token provided');
+    res.status(401).send('Unauthorized: Please Login to continue.');
   } else {
     jwt.verify(token, secret, function(err, decoded) {
       if (err) {
-        res.status(401).send('Unauthorized: Invalid token');
+        res.status(401).send('Unauthorized: Please Login to continue.');
       } else {
         req.email = decoded.email;
         next();
