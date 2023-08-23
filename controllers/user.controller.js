@@ -41,12 +41,16 @@ module.exports = {
         const token = jwt.sign(payload, secret, {
           expiresIn: '1h',
         });
-        res.cookie('token', token, { httpOnly: true })
+        res.cookie('token', token, { httpOnly: true });
         res.cookie('userId', userId, { httpOnly: true }).sendStatus(200);
       }
     });
   },
   checkToken: async (req, res) => {
     res.sendStatus(200);
+  },
+  logOut: async (req, res) => {
+    res.clearCookie('token', { httpOnly: true });
+    res.clearCookie('userId', { httpOnly: true }).sendStatus(200);
   },
 };
