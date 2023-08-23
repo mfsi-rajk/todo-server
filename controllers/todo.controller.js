@@ -23,7 +23,7 @@ module.exports = {
   getAllTodos: async (req, res) => {
     try {
       const { page = 1, limit = 10, sortByPriority, filterByStatus, searchQuery } = req.query;
-      const userId = req.body.userId;
+      const userId = req.cookies.userId;
 
       if (!userId) {
         return res.status(401).json({ error: 'Could not fetch todos.' });
@@ -66,6 +66,7 @@ module.exports = {
   },
   updateTodo: async (req, res) => {
     const todoId = req.params.id;
+    const userId = req.cookies.userId;
     const body = _.pick(req.body, [
       'title',
       'description',
@@ -76,7 +77,7 @@ module.exports = {
       'category',
     ]);
 
-    if (!body.user) {
+    if (!userId) {
       return res.status(401).json({ error: 'Could not update todo.' });
     }
 
@@ -98,7 +99,7 @@ module.exports = {
 
   deleteTodo: async (req, res) => {
     const todoId = req.params.id;
-    const userId = req.body.userId;
+    const userId = req.cookies.userId;
     try {
       if (!userId) {
         return res.status(401).json({ error: 'Could not delete todos.' });

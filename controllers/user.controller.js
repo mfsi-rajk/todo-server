@@ -36,12 +36,13 @@ module.exports = {
           error: 'Incorrect email or password',
         });
       } else {
-        // Issue token
+        const userId = user._id.toString();
         const payload = { email };
         const token = jwt.sign(payload, secret, {
           expiresIn: '1h',
         });
-        res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+        res.cookie('token', token, { httpOnly: true })
+        res.cookie('userId', userId, { httpOnly: true }).sendStatus(200);
       }
     });
   },
