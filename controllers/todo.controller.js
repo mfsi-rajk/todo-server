@@ -4,15 +4,16 @@ const _ = require('lodash');
 module.exports = {
   createTodo: async (req, res) => {
     try {
+      const userId = req.cookies.userId;
       const body = _.pick(req.body, [
         'title',
         'description',
         'priority',
         'status',
         'dueDate',
-        'user',
         'category',
       ]);
+      body.user = userId;
       const newTodo = new Todo(body);
       await newTodo.save();
       res.status(201).json(newTodo);
@@ -22,7 +23,15 @@ module.exports = {
   },
   getAllTodos: async (req, res) => {
     try {
-      const { page = 1, limit = 10, sortByPriority, filterByStatus, searchQuery } = req.query;
+      const {
+        page = 1,
+        limit = 10,
+        sortByPriority,
+        filterByStatus,
+        searchQuery,
+        sortByDueDate,
+        sortByCategory,
+      } = req.query;
       const userId = req.cookies.userId;
 
       if (!userId) {
@@ -33,6 +42,14 @@ module.exports = {
 
       if (sortByPriority) {
         todosQuery = todosQuery.sort({ priority: sortByPriority });
+      }
+
+      if (sortByDueDate) {
+        todosQuery = todosQuery.sort({ dueDate: sortByDueDate });
+      }
+
+      if (sortByCategory) {
+        todosQuery = todosQuery.sort({ category: sortByCategory });
       }
 
       if (filterByStatus) {
@@ -82,7 +99,7 @@ module.exports = {
     }
 
     try {
-      const todo = await Todo.findOne({ _id: todoId, user: body.user });
+      const todo = await Todo.findOne({ _id: todoId, user: userId });
 
       if (!todo) {
         return res.status(404).json({ error: 'Todo not found' });
